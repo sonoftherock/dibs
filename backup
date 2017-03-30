@@ -1,0 +1,81 @@
+from flask import Flask
+from flask import Flask, flash, redirect, render_template, request, session, abort
+import os
+from sqlalchemy.orm import sessionmaker
+from tabledef import *
+from products import *
+from flask.ext.hashing import Hashing
+
+engine = create_engine('sqlite:///users.db', echo=True)
+engine_products = create_engine('sqlite:///products.db', echo = True)
+
+app = Flask(__name__)
+hashing = Hashing(app)
+
+@app.route('/', methods=["GET","POST"])
+def home():
+    return render_template("home.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == 'POST':
+        POST_USERNAME = str(request.form['username']).strip()
+        POST_PASSWORD = str(request.form['password']).strip()
+
+        Session = sessionmaker(bind=engine)
+        s = Session()
+        query = s.query(User).filter(User.username.in_([POST_USERNAME]))
+        user_exists = query.first()
+        #checks for username
+        if user_exists:
+            #checks for hashedpassword
+            hashedpassword = query.first().password
+            if hashing.check_value(hashedpassword, POST_PASSWORD, salt='timothy'):
+                Session = sessionmaker(bind=engine_products)
+                ses = Session()
+                q = ses.query(Products)
+                url = q.first().product_image
+                return render_template('homeloggedin.html', product_image = url , product = q.first().product_name, entry_fee = q.first().entry_fee)
+
+            else:
+                error = 'wrong password!'
+                return render_template('login.html', error = error)
+
+        else:
+            error = 'wrong username!'
+            return render_template('login.html', error = error)
+
+    else:
+        return render_template('login.html', error = error)
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    error = None
+    if request.method == "POST":
+        POST_USERNAME = str(request.form['username']).strip()
+        POST_PASSWORD = str(request.form['password']).strip()
+
+        Session = sessionmaker(bind=engine)
+        s = Session()
+        query = s.query(User).filter(User.username.in_([POST_USERNAME]))
+        result = query.first()
+        if not result:
+            hashedpw = hashing.hash_value(POST_PASSWORD, salt='timothy')
+            user = User(POST_USERNAME, hashedpw)
+            s.add(user)
+            s.commit()
+            return render_template('login.html', error = error)
+        else:
+            error = "username already exists!"
+            return render_template('register.html', error = error)
+    else:
+        return render_template('register.html')
+
+@app.route("/info", methods=["POST"])
+def info():
+    return render_template('info.html')
+
+if __name__ == "__main__":
+    app.run()
