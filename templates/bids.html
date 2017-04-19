@@ -12,12 +12,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+
 </head>
+
 
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
 .bgimg {
+    background-image: url();
     min-height: 100%;
     background-position: center;
     background-size: cover;
@@ -29,32 +32,11 @@ body, html {height: 100%}
   <div class="w3-bar w3-white">
       <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
         <div class="w3-display-topleft w3-padding-large w3-xlarge">
-          <a class ="logo" href='/'><font color= '#e89c8d'>dibs</font></a>
+          <a class ="logo" href='/homeloggedin'><font color= '#e89c8d'>dibs</font></a>
         </div>
       </div>
-    <a href="/register" class="w3-bar-item w3-button w3-right w3-padding-16" style="padding-right:20px">Register</a>
-    <a href="/login" class="w3-bar-item w3-button w3-right w3-padding-16">Log in</a>
+    <a href="/logout" class="w3-bar-item w3-button w3-right w3-padding-16">Log Out</a>
   </div>
 
-    <form action="{{ url_for('register') }}" method="post">
-      <center>
-        <fieldset style="margin-top:150px;border-radius:25px;background-color:#e89c8d;height:250px;width:200px">
-            <div class="form-group" style="margin-top:60px">
-                <input class="form-control" name="username" placeholder="Username" type="text" style="width:100px"/>
-            </div>
-            <div class="form-group">
-                <input class="form-control" name="password" placeholder="Password" type="password" style="width:100px" />
-            </div>
-            <div class="form-group">
-                <button class="btn btn-default" type="submit">Register</button>
-            </div>
-        </fieldset>
-      </center>
-    </form>
-    <center>
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}
-    </center>
 </body>
 </html>

@@ -12,29 +12,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+
 </head>
+
 
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
 .bgimg {
-    /* background-image: url('https://s29.postimg.org/so6d9rhhj/Capture.png'); */
+    background-image: url();
     min-height: 100%;
     background-position: center;
-    background-size: auto 100px;
+    background-size: cover;
 }
 </style>
 <body>
+  <div class="bgimg w3-display-container w3-animate-opacity">
+
   <div class="w3-bar w3-white">
       <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
-        <div class="w3-display-topleft w3-padding-large w3-xlarge w3-padding-16">
-          <a class ="logo" href='/'><font color= '#e89c8d'>dibs</font></a>
+        <div class="w3-display-topleft w3-padding-large w3-xlarge">
+          <a class ="logo" href='/homeloggedin'><font color= '#e89c8d'>dibs</font></a>
         </div>
       </div>
-    <a href="/register" class="w3-bar-item w3-button w3-right w3-padding-16" style="padding-right:20px">Register</a>
-    <a href="/login" class="w3-bar-item w3-button w3-right w3-padding-16">Log in</a>
+    <a href="/logout" class="w3-bar-item w3-button w3-right w3-padding-16">Log Out</a>
   </div>
-
-
+  <center>
+  <div style="background-color:#e89c8d;padding:20px;width:600px;margin-top:120px">
+  <h2>A venmo request of $1 has been sent to your account. The bidding window will be unlocked after you complete the request.
+    If you have already paid and are still seeing this window, it means your payment is being processed. Please wait. </h2>
+  </div>
+<p style="margin-top:20px">*For this month, all profit will be donated to Yale Children's hospital.</p>
+</center>
 </body>
 </html>

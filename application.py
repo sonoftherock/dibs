@@ -30,6 +30,15 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+Session1 = sessionmaker(bind=engine_products)
+ses = Session1()
+qproducts = ses.query(Products)
+url = qproducts.first().product_image
+
+Session2 = sessionmaker(bind=engine)
+s = Session2()
+quser = s.query(User)
+
 def login_required(f):
     """
     Decorate routes to require login.
@@ -56,8 +65,6 @@ def login():
         POST_USERNAME = str(request.form['username']).strip()
         POST_PASSWORD = str(request.form['password']).strip()
 
-        Session = sessionmaker(bind=engine)
-        s = Session()
         query = s.query(User).filter(User.username.in_([POST_USERNAME]))
         user_exists = query.first()
         #checks for username
@@ -67,13 +74,9 @@ def login():
             hashedpassword = query.first().password
 
             if hashing.check_value(hashedpassword, POST_PASSWORD, salt='timothy'):
-                Session = sessionmaker(bind=engine_products)
-                ses = Session()
-                q = ses.query(Products)
-                url = q.first().product_image
                 # remember which user has logged in
                 session["username"] = query.first().username
-                return render_template('homeloggedin.html', product_image = url , product = q.first().product_name, entry_fee = q.first().entry_fee)
+                return render_template('homeloggedin.html', product_image = url , product = qproducts.first().product_name, entry_fee = qproducts.first().entry_fee)
 
             else:
                 error = 'wrong password!'
@@ -93,8 +96,6 @@ def register():
         POST_USERNAME = str(request.form['username']).strip()
         POST_PASSWORD = str(request.form['password']).strip()
 
-        Session = sessionmaker(bind=engine)
-        s = Session()
         query = s.query(User).filter(User.username.in_([POST_USERNAME]))
         result = query.first()
         if not result:
@@ -112,25 +113,32 @@ def register():
 @app.route("/homeloggedin", methods=["GET","POST"])
 @login_required
 def homeloggedin():
-    Session = sessionmaker(bind=engine_products)
-    ses = Session()
-    q = ses.query(Products)
-    url = q.first().product_image
-    return render_template('homeloggedin.html', product_image = url , product = q.first().product_name, entry_fee = q.first().entry_fee)
+    return render_template('homeloggedin.html', product_image = url , product = qproducts.first().product_name, entry_fee = qproducts.first().entry_fee)
 
 @app.route("/info", methods=["GET","POST"])
 @login_required
 def info():
-    Session = sessionmaker(bind=engine_products)
-    ses = Session()
-    q = ses.query(Products)
-    url = q.first().product_image
     return render_template('info.html', product_image = url)
 
 @app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
     return render_template('login.html')
+
+@app.route("/dibs", methods=["GET","POST"])
+@login_required
+def dibs():
+    return render_template("dibs.html", rows=quser, product_image=url)
+
+@app.route("/bids", methods=["GET","POST"])
+@login_required
+def bids():
+    q = s.query(User).filter(User.username.in_([session["username"]]))
+    entered = str(q.first().entrance)
+    if entered == "1":
+        return render_template("bids.html")
+    else:
+        return render_template("processing.html")
 
 if __name__ == "__main__":
     app.run()

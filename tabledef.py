@@ -15,6 +15,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     password = Column(String)
+    entrance = Column(Integer, default=0)
+    bid = Column(Float, default=0.0)
 
     #----------------------------------------------------------------------
     def __init__(self, username, password):
