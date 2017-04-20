@@ -95,12 +95,13 @@ def register():
     if request.method == "POST":
         POST_USERNAME = str(request.form['username']).strip()
         POST_PASSWORD = str(request.form['password']).strip()
+        POST_VENMO = str(request.form['venmo']).strip()
 
         query = s.query(User).filter(User.username.in_([POST_USERNAME]))
         result = query.first()
         if not result:
             hashedpw = hashing.hash_value(POST_PASSWORD, salt='timothy')
-            user = User(POST_USERNAME, hashedpw)
+            user = User(POST_USERNAME, hashedpw, POST_VENMO)
             s.add(user)
             s.commit()
             return render_template('login.html', error = error)
@@ -115,11 +116,6 @@ def register():
 def homeloggedin():
     return render_template('homeloggedin.html', product_image = url , product = qproducts.first().product_name, entry_fee = qproducts.first().entry_fee)
 
-@app.route("/info", methods=["GET","POST"])
-@login_required
-def info():
-    return render_template('info.html', product_image = url)
-
 @app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
@@ -133,12 +129,25 @@ def dibs():
 @app.route("/bids", methods=["GET","POST"])
 @login_required
 def bids():
-    q = s.query(User).filter(User.username.in_([session["username"]]))
-    entered = str(q.first().entrance)
-    if entered == "1":
-        return render_template("bids.html")
+    if request.method == "POST":
+        NEWBID = request.form['newbid'].strip()
+        q = s.query(User).filter(User.username.in_([session["username"]]))
+        q.first().bid = NEWBID
+        s.commit()
+        bid = str(q.first().bid)
+        qu = s.query(func.sum(User.bid)).scalar()
+        return render_template("dibs.html", rows=quser, product_image=url)
+
     else:
-        return render_template("processing.html")
+        q = s.query(User).filter(User.username.in_([session["username"]]))
+        bid = q.first().bid
+        entered = str(q.first().entrance)
+        qu = s.query(func.sum(User.bid)).scalar()
+        chance = int((bid/qu)*100)
+        if entered == "1":
+            return render_template("bids.html", rows=quser, product_image=url, userbid= bid, chance = chance)
+        else:
+            return render_template("processing.html")
 
 if __name__ == "__main__":
     app.run()

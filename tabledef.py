@@ -15,14 +15,15 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     password = Column(String)
+    venmoacc = Column(String)
     entrance = Column(Integer, default=0)
     bid = Column(Float, default=0.0)
 
     #----------------------------------------------------------------------
-    def __init__(self, username, password):
+    def __init__(self, username, password, venmoacc):
         """"""
         self.username = username
         self.password = password
-
+        self.venmoacc = venmoacc
 # create tables
 Base.metadata.create_all(engine)

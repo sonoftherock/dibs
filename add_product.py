@@ -9,7 +9,7 @@ engine = create_engine('sqlite:///products.db', echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-products = Products("http://www.pacificsandiego.com/wp-content/uploads/2016/01/omnia1-2-1.jpg","Chainsmokers Ticket",2.0, 140, 0)
+products = Products("https://sneakerbardetroit.com/wp-content/uploads/2016/09/adidas-yeezy-350-boost-v2-beluga-grey-solar-red-1.jpg","Yeezy Boost",2.0, 500, 0)
 session.add(products)
 
 # commit the record the database
